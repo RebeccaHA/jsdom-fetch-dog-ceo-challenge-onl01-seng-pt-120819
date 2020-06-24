@@ -1,8 +1,8 @@
+let breeds = []
 document.addEventListener('DOMContentLoaded', function(){
     fetchImages()
     addImage()
-    fetchBreeds()
-    addBreeds()
+    fetchBreeds() 
 })
 
 function fetchImages(){
@@ -14,7 +14,7 @@ function fetchImages(){
 }
 
 function addImage(image){
-    let element = document.createElement('img');
+    const element = document.createElement('img');
     element.src = image;
     document.getElementById('dog-image-container').appendChild(element);
 }
@@ -22,23 +22,38 @@ function addImage(image){
 function fetchBreeds(){
     fetch('https://dog.ceo/api/breeds/list/all')
     .then(resp => resp.json())
-    .then(json => addBreeds(json.message)
-    )}
- 
+    .then(json => { breeds = Object.keys(json.message)
+        addBreeds(breeds)
+    });
+    
 
-function addBreeds(breed_hash){
-    let list = document.querySelector('#dog-breeds');
-    for(breed in breed_hash){
+
+function addBreeds(breeds){
+    const list = document.querySelector('#dog-breeds');
+   while (list.childElementCount > 0){
+        list.removeChild(list.childNodes[0]);
+    }
+    breeds.forEach((breed)=>{
     const listItem = document.createElement('li');
     listItem.innerHTML = breed
     list.appendChild(listItem);
     listItem.addEventListener("click", updateTextColor )
-}}
+    
+})};
 
 function updateTextColor(e){
     e.target.style.cssText = 'color:blue;'
 }
 
+document.getElementById('breed-dropdown').addEventListener("change", filterBreeds)
+
 function filterBreeds(){
-    
+    const dropdown = document.getElementById('breed-dropdown')
+    const filtered = breeds.filter(function(breed){
+   return breed.charAt(0) == dropdown.value
+
+    })
+   
+    addBreeds(filtered)
+ }
 }
